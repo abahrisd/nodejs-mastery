@@ -12,6 +12,7 @@ router.get('/', (req, res, next) => {
     hasProds: products.length > 0,
     docTitle: 'Shop',
     activeShop: true,
+    pageTitle: 'Shop',
     path: '/',
     productCSS: true,
     formsCSS: true,
