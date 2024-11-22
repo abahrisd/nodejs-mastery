@@ -6,10 +6,15 @@ const adminData = require('./admin');
 
 router.get('/', (req, res, next) => {
   console.log('prods', adminData.products);
+  const products = adminData.products;
   res.render('shop', {
-    prods: adminData.products,
+    prods: products,
+    hasProds: products.length > 0,
     docTitle: 'Shop',
+    activeShop: true,
     path: '/',
+    productCSS: true,
+    formsCSS: true,
   });
 });
 
