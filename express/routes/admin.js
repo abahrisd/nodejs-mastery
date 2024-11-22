@@ -5,14 +5,14 @@ const router = express.Router();
 router.get('/add-product', (req, res, next) => {
   console.log('in the middleware',);
   res.send(`
-  <form action="/product" method="post">
+  <form action="/add-product" method="post">
     <input type="text" name="title">
     <button type="submit">Submit</button>
     </form>
   `);
 });
 
-router.post('/product', (req, res, next) => {
+router.post('/add-product', (req, res, next) => {
   console.log('req.body',req.body);
   res.redirect('/');
 });
