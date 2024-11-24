@@ -4,14 +4,23 @@ exports.getProducts = (req, res, next) => {
   Product.fetchAll((products) => {
     res.render('shop/product-list', {
       prods: products,
-      hasProds: products.length > 0,
-      docTitle: 'Shop',
-      activeShop: true,
-      pageTitle: 'Shop',
-      path: '/product-list',
-      productCSS: true,
-      formsCSS: true,
+      pageTitle: 'All products',
+      path: '/products',
     });
+  });
+}
+
+exports.getProduct = (req, res, next) => {
+  Product.fetchAll((products) => {
+    const productId = req.params.productId;
+
+    Product.findById(productId, (product) => {
+      res.render('shop/product-detail', {
+        product: product,
+        pageTitle: 'Product',
+        path: '/products/' + product.id,
+      });
+    })
   });
 }
 
@@ -30,6 +39,12 @@ exports.getCart = (req, res, next) => {
     path: '/cart',
     pageTitle: 'Shop',
   });
+}
+
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  console.log('prodId',prodId);
+  res.redirect(`/cart`);
 }
 
 exports.getOrders = (req, res, next) => {
