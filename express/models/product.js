@@ -12,15 +12,18 @@ module.exports = class Product {
   }
 
   save() {
-
+    return db.execute(
+      'INSERT INTO products (title, price, imageUrl, description) VALUES (?, ?, ?, ?)',
+      [this.title, this.price, this.imageUrl, this.description],
+    );
   }
 
   static fetchAll(cb) {
     return db.execute('SELECT * FROM products');
   }
 
-  static findById(id, cb) {
-
+  static findById(id) {
+    return db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
   }
 
   static delete(id) {

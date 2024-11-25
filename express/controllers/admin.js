@@ -9,7 +9,6 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  console.log('req.body',req.body);
   const body = req.body;
   const title = body.title;
   const imageUrl = body.imageUrl;
@@ -22,8 +21,13 @@ exports.postAddProduct = (req, res, next) => {
       description,
       price,
   });
-  product.save();
-  res.redirect('/admin/products');
+
+  product.save()
+    .then((result) => {
+      console.log('result  ',result);
+      res.redirect('/');
+    })
+    .catch(err => console.log('save error', err));
 }
 
 exports.getEditProduct = (req, res, next) => {

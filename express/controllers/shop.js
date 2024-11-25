@@ -14,17 +14,19 @@ exports.getProducts = (req, res, next) => {
 }
 
 exports.getProduct = (req, res, next) => {
-  Product.fetchAll((products) => {
-    const productId = req.params.productId;
+  const productId = req.params.productId;
 
-    Product.findById(productId, (product) => {
+  Product.findById(productId)
+    .then(([product]) => {
+      console.log('product',product);
+
       res.render('shop/product-detail', {
-        product: product,
+        product: product[0],
         pageTitle: 'Product',
-        path: '/products/' + product.id,
-      });
+        path: '/products/' + product[0].id,
+      })
     })
-  });
+    .catch(err => console.log('getProduct err',err));
 }
 
 exports.getIndex = (req, res, next) => {
