@@ -62,6 +62,9 @@ sequelize
     return user;
   })
   .then(user => {
+    return user.createCart();
+  })
+  .then(user => {
     console.log('sync user',user);
     app.listen(3000);
   })
