@@ -1,18 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const appController = require('./controllers/error');
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const path = require("path");
-
-db.execute('SELECT * FROM products')
-  .then(result => {
-    console.log('db result', result[0], result[1]);
-  }).catch((err) => {
-    console.log('err', err);
-  });
 
 const app = express();
 
@@ -27,4 +20,9 @@ app.use(shopRoutes);
 
 app.use(appController.get404);
 
-app.listen(3000);
+sequelize.sync().then(result => {
+  console.log('result',result);
+  app.listen(3000);
+}).catch(err => {
+  console.log('seq err',err);
+})
