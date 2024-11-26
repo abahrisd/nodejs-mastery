@@ -32,18 +32,6 @@ exports.getProduct = (req, res, next) => {
       })
     })
     .catch(err => console.log('getProduct err',err));
-
-  // Product.findByPk(productId)
-  //   .then(product => {
-  //     console.log('product',product);
-  //
-  //     res.render('shop/product-detail', {
-  //       product: product,
-  //       pageTitle: 'Product',
-  //       path: '/products/' + productId,
-  //     })
-  //   })
-  //   .catch(err => console.log('getProduct err',err));
 }
 
 exports.getIndex = (req, res, next) => {
