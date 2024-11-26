@@ -17,6 +17,15 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+  User.findByPk(1)
+    .then(user => {
+      req.user = user;
+      next();
+    })
+    .catch(err => console.log('error',err));
+});
+
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
 
@@ -29,9 +38,22 @@ Product.belongsTo(User, {
 User.hasMany(Product);
 
 sequelize
-  .sync({force: true})
+  .sync({force: false})
   .then(result => {
-    console.log('result',result);
+    return User.findByPk(1);
+  })
+  .then(user => {
+    if (!user) {
+      return User.create({
+        name: 'Samir',
+        email: 'test@test.com',
+      });
+    }
+
+    return user;
+  })
+  .then(user => {
+    console.log('sync user',user);
     app.listen(3000);
   })
   .catch(err => {
