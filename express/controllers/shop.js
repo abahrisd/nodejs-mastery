@@ -1,5 +1,5 @@
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+const {logger} = require("sequelize/lib/utils/logger");
 
 exports.getProducts = (req, res, next) => {
   Product
@@ -61,35 +61,47 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const prodId = req.body.productId;
-  let fetchedCart;
-  let newQuantity = 1;
 
-  req.user.getCart()
-    .then(cart => {
-      fetchedCart = cart;
-      return cart.getProducts({where: {id: prodId}});
-    })
-    .then(products => {
-      let product;
-      if (products.length > 0) {
-        product = products[0];
-      }
-      if (product) {
-        const oldQty = product.cartItem.quantity;
-        newQuantity = oldQty + 1;
-        return product;
-      }
-
-      return Product.findByPk(prodId)
-        .catch(err => console.log('getIndex err',err));
-    })
+  Product.findById(prodId)
     .then(product => {
-      return fetchedCart.addProduct(product, {through: { quantity: newQuantity }});
+      console.log('product cart', {product, user: req.user});
+
+      return req.user.addToCart(product);
     })
     .then(result => {
-      res.redirect(`/cart`);
+      console.log('postCart result', result);
+      return result;
     })
-    .catch(err => console.log('postCart',err));
+
+  // let fetchedCart;
+  // let newQuantity = 1;
+  //
+  // req.user.getCart()
+  //   .then(cart => {
+  //     fetchedCart = cart;
+  //     return cart.getProducts({where: {id: prodId}});
+  //   })
+  //   .then(products => {
+  //     let product;
+  //     if (products.length > 0) {
+  //       product = products[0];
+  //     }
+  //     if (product) {
+  //       const oldQty = product.cartItem.quantity;
+  //       newQuantity = oldQty + 1;
+  //       return product;
+  //     }
+  //
+  //     return Product.findByPk(prodId)
+  //       .catch(err => console.log('getIndex err',err));
+  //   })
+  //   .then(product => {
+  //     return fetchedCart.addProduct(product, {through: { quantity: newQuantity }});
+  //   })
+  //   .then(result => {
+  //     res.redirect(`/cart`);
+  //   })
+  //   .catch(err => console.log('postCart',err));
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
