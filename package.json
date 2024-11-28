@@ -4,7 +4,7 @@
   "main": "native/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon express/app-mysql.js"
+    "start": "nodemon express/app.js"
   },
   "author": "Samir Abakhri",
   "license": "ISC",

@@ -1,16 +1,31 @@
 const mongodb = require("mongodb");
 const MongoClient = mongodb.MongoClient;
 
+let _db;
+
 const mongoConnect = callback => {
   MongoClient.connect(
-    'mongodb+srv://node-mastery:6PhOFs2ibmjj6h99@cluster0.ojxdn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
+    'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000',
     (err, db) => {
       console.log('db err',err)
     })
-    .then(result => {
+    .then(client => {
       console.log('Connected!', );
+      _db = client.db();
+      callback()
     })
-    .catch(err => console.log('Mongo err', err));
+    .catch(err => {
+      console.log('Mongo err', err)
+      throw err;
+    });
 }
 
-module.exports = mongoConnect;
+const getDb = () => {
+  if (_db) {
+    return _db;
+  }
+  throw 'No database fround';
+}
+
+exports.mongoConnect = mongoConnect;
+exports.getDb = getDb;
