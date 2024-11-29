@@ -1,5 +1,4 @@
 const Product = require('../models/product');
-const {logger} = require("sequelize/lib/utils/logger");
 
 exports.getProducts = (req, res, next) => {
   Product
@@ -46,9 +45,6 @@ exports.getIndex = (req, res, next) => {
 exports.getCart = (req, res, next) => {
   console.log('getCart',req.user.cart);
   req.user.getCart()
-    .then((cart) => {
-      return cart.getProducts();
-    })
     .then(products => {
       res.render('shop/cart', {
         path: '/cart',
@@ -70,53 +66,20 @@ exports.postCart = (req, res, next) => {
     })
     .then(result => {
       console.log('postCart result', result);
-      return result;
+      res.redirect(`/cart`);
     })
-
-  // let fetchedCart;
-  // let newQuantity = 1;
-  //
-  // req.user.getCart()
-  //   .then(cart => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts({where: {id: prodId}});
-  //   })
-  //   .then(products => {
-  //     let product;
-  //     if (products.length > 0) {
-  //       product = products[0];
-  //     }
-  //     if (product) {
-  //       const oldQty = product.cartItem.quantity;
-  //       newQuantity = oldQty + 1;
-  //       return product;
-  //     }
-  //
-  //     return Product.findByPk(prodId)
-  //       .catch(err => console.log('getIndex err',err));
-  //   })
-  //   .then(product => {
-  //     return fetchedCart.addProduct(product, {through: { quantity: newQuantity }});
-  //   })
-  //   .then(result => {
-  //     res.redirect(`/cart`);
-  //   })
-  //   .catch(err => console.log('postCart',err));
+    .catch((err) => console.log('postCart err',err));
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  req.user.getCart()
-    .then(cart => {
-      return cart.getProducts({where: {id: prodId}});
-    })
-    .then(products => {
-      const product = products[0];
-      product.cartItem.destroy();
-    })
+
+  req.user.deleteProductFromCart(prodId)
     .then(result => {
+      console.log('postCartDeleteProduct result',result)
       res.redirect(`/cart`);
-    });
+    })
+    .catch(err => console.log('postCartDeleteProduct err',err));
 }
 
 exports.postOrder = (req, res, next) => {
