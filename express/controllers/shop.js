@@ -44,8 +44,16 @@ exports.getIndex = (req, res, next) => {
 
 exports.getCart = (req, res, next) => {
   console.log('getCart',req.user.cart);
-  req.user.getCart()
-    .then(products => {
+
+  // Product.find({
+  //   '_id': { $in: req.user.cart.items.map(ci => ci.productId)}
+  // })
+  req.user
+    .populate('cart.items.productId')
+    .then(user => {
+      const products = user.cart.items;
+      console.log('getCart products',products);
+
       res.render('shop/cart', {
         path: '/cart',
         pageTitle: 'Shop',
