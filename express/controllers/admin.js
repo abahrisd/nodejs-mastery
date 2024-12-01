@@ -20,6 +20,7 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl,
     description,
     price,
+    userId: req.user,
   });
 
   product
@@ -33,7 +34,10 @@ exports.postAddProduct = (req, res, next) => {
 exports.getProducts = (req, res, next) => {
   Product
     .find()
+    .select('title price -_id')
+    .populate('userId', 'name')
     .then(products => {
+      console.log('products',products);
       res.render('admin/products', {
         prods: products,
         pageTitle: 'Admin Products',
