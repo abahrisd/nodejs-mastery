@@ -1,13 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const path = require("path");
 
 const appController = require('./controllers/error');
 const User = require('./models/user');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
-const path = require("path");
+const authRoutes = require('./routes/auth');
 
 // const mongoConnect = require("./util/database").mongoConnect;
 const app = express();
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
+app.use(authRoutes);
 
 app.use(appController.get404);
 
