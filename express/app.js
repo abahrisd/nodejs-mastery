@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require("path");
+const session = require("express-session");
 
 const appController = require('./controllers/error');
 const User = require('./models/user');
@@ -16,8 +17,18 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// always parse body
 app.use(bodyParser.urlencoded({ extended: false }));
+
+// set public dir
 app.use(express.static(path.join(__dirname, 'public')));
+
+// sessions
+app.use(session({
+  secret: 'my secret',
+  resave: false,
+  saveUninitialized: false,
+}));
 
 app.use((req, res, next) => {
   User.findById('674c2df8fa54117d2cf8e220')
