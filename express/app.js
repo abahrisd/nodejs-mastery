@@ -63,16 +63,16 @@ mongoose.connect(MONGO_DB_URI, {
   dbName: 'shop'
 })
   .then(result => {
-    User.findOne().then(user => {
-      if (!user) {
-        const user = new User({
-          name: 'Samir',
-          email: 'mail@mail.mail',
-          cart: {items: []},
-        });
-        user.save();
-      }
-    });
+    // User.findOne().then(user => {
+    //   if (!user) {
+    //     const user = new User({
+    //       name: 'Samir',
+    //       email: 'mail@mail.mail',
+    //       cart: {items: []},
+    //     });
+    //     user.save();
+    //   }
+    // });
 
     app.listen(3000, () => console.log('server started'));
   })
