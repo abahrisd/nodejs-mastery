@@ -1,3 +1,5 @@
+const User = require("../models/user");
+
 exports.getLogin = (req, res, next) => {
   // const isLoggedIn = req.get('Cookie').split(';')[1].trim().split('=')[1];
 
@@ -11,13 +13,22 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = (req, res, next) => {
-  // Expires= date of expire,
-  // Max-Age= seconds before expiration
-  // Domain
-  // Secure - working only on https
-  // HttpOnly - unable to edit with client javascript
-  // res.setHeader('Set-Cookie', 'loggedIn=true; HttpOnly');
-  req.session.isLoggedIn = true;
+  User.findById('674c2df8fa54117d2cf8e220')
+    .then(user => {
+      console.log('postLogin user',user);
+      req.session.isLoggedIn = true;
+      req.session.user = user;
+      req.session.save(err => {
+        console.log('err', err);
+        res.redirect('/');
+      })
+    });
+}
 
-  res.redirect('/');
+exports.postLogout = (req, res, next) => {
+  req.session.destroy((err) => {
+    // sessions is not available here anymore
+    console.log('err', err)
+    res.redirect('/');
+  });
 }

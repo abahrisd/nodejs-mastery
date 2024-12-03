@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require("path");
 const session = require("express-session");
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const appController = require('./controllers/error');
 const User = require('./models/user');
@@ -11,8 +12,15 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 
+const MONGO_DB_URI = 'mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000';
+
 // const mongoConnect = require("./util/database").mongoConnect;
 const app = express();
+const store = new MongoDBStore({
+  uri: MONGO_DB_URI,
+  databaseName: 'shop',
+  collection: 'sessions',
+});
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -28,10 +36,16 @@ app.use(session({
   secret: 'my secret',
   resave: false,
   saveUninitialized: false,
+  store,
 }));
 
 app.use((req, res, next) => {
-  User.findById('674c2df8fa54117d2cf8e220')
+
+  if (!req.session.user) {
+    return next();
+  }
+
+  User.findById(req.session.user._id)
     .then(user => {
       req.user = user;
       next();
@@ -45,7 +59,7 @@ app.use(authRoutes);
 
 app.use(appController.get404);
 
-mongoose.connect('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000', {
+mongoose.connect(MONGO_DB_URI, {
   dbName: 'shop'
 })
   .then(result => {
