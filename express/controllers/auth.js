@@ -2,14 +2,10 @@ const User = require("../models/user");
 const bcrypt = require('bcryptjs');
 
 exports.getLogin = (req, res, next) => {
-  // const isLoggedIn = req.get('Cookie').split(';')[1].trim().split('=')[1];
-
-  console.log('req.session.isLoggedIn',req.session.isLoggedIn);
-
   res.render('auth/login', {
     path: '/login',
     pageTitle: 'Login',
-    isAuthenticated: false,
+    errorMessage: req.flash('error'),
   });
 }
 
@@ -22,6 +18,7 @@ exports.postLogin = (req, res, next) => {
       console.log('postLogin user',user);
 
       if (!user) {
+        req.flash('error', 'Invalid email or password.');
         return res.redirect('/login');
       }
 
@@ -46,7 +43,7 @@ exports.postLogin = (req, res, next) => {
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     // sessions is not available here anymore
-    console.log('err', err)
+    console.log('err', err);
     res.redirect('/');
   });
 }
@@ -55,7 +52,6 @@ exports.getSignup = (req, res, next) => {
   res.render('auth/signup', {
     path: '/signup',
     pageTitle: 'Signup',
-    isAuthenticated: false
   });
 };
 

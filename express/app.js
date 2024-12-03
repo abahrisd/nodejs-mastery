@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const path = require("path");
 const session = require("express-session");
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
+const flash= require('connect-flash');
 
 const appController = require('./controllers/error');
 const User = require('./models/user');
@@ -38,6 +40,8 @@ app.use(session({
   saveUninitialized: false,
   store,
 }));
+app.use(csrf());
+app.use(flash());
 
 app.use((req, res, next) => {
 
@@ -52,6 +56,12 @@ app.use((req, res, next) => {
     })
     .catch(err => console.log('error user',err));
 });
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggenIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
 
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
