@@ -1,7 +1,6 @@
 const Product = require("../models/product");
 const {error500next} = require("../util/errors");
-const {logger} = require("sequelize/lib/utils/logger");
-
+const fileHelper = require("../util/file");
 
 exports.getAddProduct = (req, res, next) => {
   const message = req.flash('error');
@@ -57,9 +56,8 @@ exports.postAddProduct = (req, res, next) => {
 
 exports.getProducts = (req, res, next) => {
   Product
-    // .find()
     .find({userId: req.user._id})
-    .select('title price')
+    .select('title price imageUrl')
     .populate('userId', 'name')
     .then(products => {
       console.log('products',products);
@@ -119,6 +117,7 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
 
       if (image) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = image.path;
       }
 
@@ -139,7 +138,14 @@ exports.postEditProduct = (req, res, next) => {
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
 
-  Product.deleteOne({_id: prodId, userId: req.user._id})
+  Product.findById(prodId)
+    .then(product => {
+      if (!product) {
+        return next(new Error('Product not found'));
+      }
+      fileHelper.deleteFile(product.imageUrl);
+      return Product.deleteOne({_id: prodId, userId: req.user._id})
+    })
     .then(result => {
       res.redirect('/admin/products');
     })
