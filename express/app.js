@@ -44,6 +44,15 @@ app.use(csrf());
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  res.locals.csrfToken = req.csrfToken();
+  next();
+})
+
+app.use((req, res, next) => {
+
+  // outside of promise we can just throw error, but inside - only with next
+  // throw new Error('Sync dum!');
 
   if (!req.session.user) {
     return next();
@@ -58,15 +67,9 @@ app.use((req, res, next) => {
       next();
     })
     .catch(err => {
-      throw new Error(err);
+      next(new Error(err))
     });
 });
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn;
-  res.locals.csrfToken = req.csrfToken();
-  next();
-})
 
 app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
@@ -84,17 +87,6 @@ mongoose.connect(MONGO_DB_URI, {
   dbName: 'shop'
 })
   .then(result => {
-    // User.findOne().then(user => {
-    //   if (!user) {
-    //     const user = new User({
-    //       name: 'Samir',
-    //       email: 'mail@mail.mail',
-    //       cart: {items: []},
-    //     });
-    //     user.save();
-    //   }
-    // });
-
     app.listen(3000, () => console.log('server started'));
   })
   .catch(err => console.log('connect err', err));
