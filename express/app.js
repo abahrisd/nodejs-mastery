@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash= require('connect-flash');
+const multer = require('multer');
 
 const appController = require('./controllers/error');
 const User = require('./models/user');
@@ -29,6 +30,33 @@ app.set('views', path.join(__dirname, 'views'));
 
 // always parse body
 app.use(bodyParser.urlencoded({ extended: false }));
+
+const fileStorage = multer.diskStorage({
+  destination: (req, file, callback) => {
+    callback(null, 'images');
+  },
+  filename: (req, file, callback) => {
+    callback(null, new Date().toISOString() + '-' + file.originalname);
+  }
+});
+
+const fileFilter = (req, file, callback) => {
+  if ([
+    'image/png',
+    'image/jpg',
+    'image/jpeg',
+  ].includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}
+
+// handle file field with name image
+app.use(multer({
+  storage: fileStorage,
+  fileFilter,
+}).single('image'));
 
 // set public dir
 app.use(express.static(path.join(__dirname, 'public')));

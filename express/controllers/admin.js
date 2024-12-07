@@ -13,9 +13,11 @@ exports.getAddProduct = (req, res, next) => {
 exports.postAddProduct = (req, res, next) => {
   const body = req.body;
   const title = body.title;
-  const imageUrl = body.imageUrl;
+  const imageUrl = req.file;
   const description = body.description;
   const price = body.price;
+
+  console.log('imageUrl', imageUrl);
 
   const product = new Product({
     title,
@@ -28,8 +30,6 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then((product) => {
-      throw Erorr('woops');
-      console.log('result', product);
       res.redirect('/');
   }).catch(err => {
     return error500next(err, next);
@@ -96,7 +96,7 @@ exports.postEditProduct = (req, res, next) => {
         return res.redirect('/');
       }
       product.title = updatedTitle;
-      product.imageUrl = updatedImageUrl;
+      product.imageUrl = updatedimage;
       product.description = updatedDesc;
       product.price = updatedPrice;
 
