@@ -33,10 +33,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const fileStorage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'images');
+    callback(null, 'express/images');
   },
   filename: (req, file, callback) => {
-    callback(null, new Date().toISOString() + '-' + file.originalname);
+    callback(null, Date.now() + '-' + file.originalname);
   }
 });
 
@@ -46,9 +46,9 @@ const fileFilter = (req, file, callback) => {
     'image/jpg',
     'image/jpeg',
   ].includes(file.mimetype)) {
-    cb(null, true);
+    callback(null, true);
   } else {
-    cb(null, false);
+    callback(null, false);
   }
 }
 
@@ -60,6 +60,7 @@ app.use(multer({
 
 // set public dir
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/express/images', express.static(path.join(__dirname, 'images')));
 
 // sessions
 app.use(session({
@@ -104,10 +105,10 @@ app.use(shopRoutes);
 app.use(authRoutes);
 
 app.get('/500', appController.get500);
-
 app.use(appController.get404);
 
 app.use((error, req, res, next) => {
+  console.log('error handler',error)
   res.redirect('/500');
 })
 
