@@ -7,6 +7,7 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 const { validationResult } = require("express-validator");
 
 const secrets = require("../secrets");
+const {error500next} = require("../util/errors");
 
 const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
@@ -90,7 +91,9 @@ exports.postLogin = (req, res, next) => {
             validationErrors: [],
           });
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          return error500next(err, next);
+        });
     });
 }
 
@@ -164,7 +167,7 @@ exports.postSignup = (req, res, next) => {
         });
     })
     .catch(err => {
-      console.log('postSignup', err);
+      return error500next(err, next);
     });
 };
 
@@ -211,7 +214,9 @@ exports.postReset = (req, res, next) => {
           `
         });
       })
-      .catch(err => console.log('postReset err', err));
+      .catch(err => {
+        return error500next(err, next);
+      });
   })
 };
 
@@ -260,6 +265,8 @@ exports.postNewPassword = (req, res, next) => {
     .then(result => {
       return res.redirect('/login');
     })
-    .catch(err => console.log('postNewPassword', err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 
 }

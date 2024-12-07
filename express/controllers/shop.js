@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const Order = require('../models/order');
+const {error500next} = require("../util/errors");
 
 exports.getProducts = (req, res, next) => {
   Product
@@ -11,7 +12,9 @@ exports.getProducts = (req, res, next) => {
         path: '/products',
       });
     })
-    .catch(err => console.log('getProducts err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.getProduct = (req, res, next) => {
@@ -27,7 +30,9 @@ exports.getProduct = (req, res, next) => {
         path: '/products/' + productId,
       })
     })
-    .catch(err => console.log('getProduct err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.getIndex = (req, res, next) => {
@@ -40,7 +45,9 @@ exports.getIndex = (req, res, next) => {
         path: '/',
       })
     })
-    .catch(err => console.log('getIndex err', err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.getCart = (req, res, next) => {
@@ -56,7 +63,9 @@ exports.getCart = (req, res, next) => {
         products,
       });
     })
-    .catch(err => console.log('getIndex err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.postCart = (req, res, next) => {
@@ -72,7 +81,9 @@ exports.postCart = (req, res, next) => {
       console.log('postCart result', result);
       res.redirect(`/cart`);
     })
-    .catch((err) => console.log('postCart err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -83,7 +94,9 @@ exports.postCartDeleteProduct = (req, res, next) => {
       console.log('postCartDeleteProduct result',result)
       res.redirect(`/cart`);
     })
-    .catch(err => console.log('postCartDeleteProduct err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.postOrder = (req, res, next) => {
@@ -110,7 +123,9 @@ exports.postOrder = (req, res, next) => {
     .then(result => {
       res.redirect(`/orders`);
     })
-    .catch(err => console.log('postOrder',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.getOrders = (req, res, next) => {
@@ -123,6 +138,8 @@ exports.getOrders = (req, res, next) => {
         orders,
       });
     })
-    .catch(err => console.log('getOrders err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 

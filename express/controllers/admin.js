@@ -1,4 +1,6 @@
 const Product = require("../models/product");
+const {error500next} = require("../util/errors");
+
 
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
@@ -26,9 +28,12 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then((product) => {
+      throw Erorr('woops');
       console.log('result', product);
       res.redirect('/');
-  }).catch(err => console.log('save error', err));
+  }).catch(err => {
+    return error500next(err, next);
+  });
 }
 
 exports.getProducts = (req, res, next) => {
@@ -45,7 +50,9 @@ exports.getProducts = (req, res, next) => {
         path: '/admin/products',
       });
     })
-    .catch(err => console.log('getProducts admin err',err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -70,6 +77,9 @@ exports.getEditProduct = (req, res, next) => {
         path: '/admin/edit-product',
         editing: editMode === 'true',
       });
+    })
+    .catch(err => {
+      return error500next(err, next);
     });
 }
 
@@ -96,7 +106,9 @@ exports.postEditProduct = (req, res, next) => {
         });
     })
 
-    .catch(err => console.log('postEditProduct err', err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -106,5 +118,7 @@ exports.postDeleteProduct = (req, res, next) => {
     .then(result => {
       res.redirect('/admin/products');
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      return error500next(err, next);
+    });
 }

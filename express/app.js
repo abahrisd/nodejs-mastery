@@ -72,7 +72,13 @@ app.use('/admin', adminRoutes.routes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get('/500', appController.get500);
+
 app.use(appController.get404);
+
+app.use((error, req, res, next) => {
+  res.redirect('/500');
+})
 
 mongoose.connect(MONGO_DB_URI, {
   dbName: 'shop'
