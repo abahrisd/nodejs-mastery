@@ -6,7 +6,7 @@ const PDFDocument = require('pdfkit');
 
 const {error500next} = require("../util/errors");
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 1;
 
 exports.getProducts = (req, res, next) => {
   Product
@@ -42,10 +42,10 @@ exports.getProduct = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
-  const page = req.query.page;
+  const page = +req.query.page || 1;
   let totalItems;
 
-  Product.find().count().then(numProducts => {
+  Product.find().countDocuments().then(numProducts => {
     totalItems = numProducts;
     return Product
       .find()
