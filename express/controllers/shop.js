@@ -12,6 +12,7 @@ exports.getProducts = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
+  // TODO refactor with getIndex
   Product.find().countDocuments().then(numProducts => {
     totalItems = numProducts;
     return Product
@@ -59,6 +60,7 @@ exports.getIndex = (req, res, next) => {
   const page = +req.query.page || 1;
   let totalItems;
 
+  // TODO refactor with getProducts
   Product.find().countDocuments().then(numProducts => {
     totalItems = numProducts;
     return Product
