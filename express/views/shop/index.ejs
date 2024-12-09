@@ -27,6 +27,18 @@
                 </article>
             <% } %>
         </div>
+    <section class="pagination">
+        totalProducts
+        hasNextPage
+        hasPreviousPage
+        nextPage
+        previousPage
+        lastPage
+
+        <a href="/?page=1">1</a>
+
+        <a href="/?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+    </section>
     <% } else { %>
         <h1>No products found</h1>
     <% } %>
