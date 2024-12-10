@@ -3,8 +3,8 @@ const Order = require('../models/order');
 const path = require('path');
 const fs = require('fs');
 const PDFDocument = require('pdfkit');
-const stripe = require('stripe')('sk_test_51QUEIGHJd0rBwEEOpl03OApqRMiW7J75nhdczj7RTcnhsitRLIHBIkMsPkdPo4MLHekAOsx62wZqEUErXSAPsv0A00xlJp2taN');
-
+const {STRIPE_PK_KEY, STRIPE_SK_KEY} = require("../secrets");
+const stripe = require('stripe')(STRIPE_SK_KEY);
 const {error500next} = require("../util/errors");
 
 const ITEMS_PER_PAGE = 1;
@@ -175,6 +175,7 @@ exports.getCheckout = (req, res, next) => {
         path: '/checkout',
         products,
         totalSum,
+        stripePkKey: STRIPE_PK_KEY,
         sessionId: session.id,
       })
     })
