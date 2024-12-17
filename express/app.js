@@ -116,7 +116,12 @@ mongoose.connect(MONGO_DB_URI, {
   dbName: 'shop'
 })
   .then(result => {
-    app.listen(3000, () => console.log('server started'));
+    const server = app.listen(3000, () => console.log('server started'));
+    const io = require('socket.io')(server);
+
+    io.on('connection', socket => {
+      console.log('Client connected',);
+    });
   })
   .catch(err => console.log('connect err', err));
 
